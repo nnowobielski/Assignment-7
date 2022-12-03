@@ -1,0 +1,157 @@
+// BST Node
+class Node
+{
+    int data;
+    Node left = null, right = null;
+ 
+    Node(int data) {
+        this.data = data;
+    }
+}
+ 
+class Main
+{
+    // Inorder
+    public static void inorder(Node root)
+    {
+        if (root == null) {
+            return;
+        }
+ 
+        inorder(root.left);
+        System.out.print(root.data + " ");
+        inorder(root.right);
+    }
+ 
+    // min value
+    public static Node getMinimumKey(Node curr)
+    {
+        while (curr.left != null) {
+            curr = curr.left;
+        }
+        return curr;
+    }
+ 
+    // insert key into BST
+    public static Node insert(Node root, int key)
+    {
+        // if root is null, create new node and return
+        if (root == null) {
+            return new Node(key);
+        }
+ 
+        // less than root node
+        if (key < root.data) {
+            root.left = insert(root.left, key);
+        }
+ 
+        // more than root node
+        else {
+            root.right = insert(root.right, key);
+        }
+ 
+        return root;
+    }
+ 
+    // delete node from BST
+    public static Node deleteNode(Node root, int key)
+    {
+        Node parent = null;
+ 
+        Node curr = root;
+ 
+        // search key + set its parent pointer
+        while (curr != null && curr.data != key)
+        {
+            // update parent to current node
+            parent = curr;
+ 
+            // if given key is less than current node, go to left subtree, if not go to right
+           
+            if (key < curr.data) {
+                curr = curr.left;
+            }
+            else {
+                curr = curr.right;
+            }
+        }
+ 
+       
+        if (curr == null) {
+            return root;
+        }
+ 
+        // no children/leaf node
+        if (curr.left == null && curr.right == null)
+        {
+            // if the node to be deleted is not a root node, then set its
+            // parent left/right child to null
+            if (curr != root)
+            {
+                if (parent.left == curr) {
+                    parent.left = null;
+                }
+                else {
+                    parent.right = null;
+                }
+            }
+            // if the tree has only root node, set to null
+            else {
+                root = null;
+            }
+        }
+ 
+        // two children
+        else if (curr.left != null && curr.right != null)
+        {
+            // find successor node
+            Node successor = getMinimumKey(curr.right);
+ 
+            // set successor value
+            int val = successor.data;
+ 
+            // deleting successor
+            deleteNode(root, successor.data);
+ 
+           
+            curr.data = val;
+        }
+ 
+        // one child
+        else {
+            // choose a child node
+            Node child = (curr.left != null)? curr.left: curr.right;
+ 
+            // set parent to child if not root node
+            if (curr != root)
+            {
+                if (curr == parent.left) {
+                    parent.left = child;
+                }
+                else {
+                    parent.right = child;
+                }
+            }
+ 
+            // set to child if root
+            else {
+                root = child;
+            }
+        }
+ 
+        return root;
+    }
+ 
+    public static void main(String[] args)
+    {
+        int[] keys = { 21, 13, 30, 9, 11, 16 };
+ 
+        Node root = null;
+        for (int key: keys) {
+            root = insert(root, key);
+        }
+ 
+        root = deleteNode(root, 16);
+        inorder(root);
+    }
+}
